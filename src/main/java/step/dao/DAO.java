@@ -10,6 +10,6 @@ import java.util.List;
 public interface DAO<T> {
   List<T> get(int id, String flight, String dsc, Date date, int np, String path) throws IOException, ParseException;
   List<T> getAll(String path) throws IOException, ParseException;
-  void put(int id, T object) throws IOException;
+  void put(int id, T object) throws IOException, ParseException;
   void delete(int id, String Code) throws IOException, ParseException;
 }

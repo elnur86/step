@@ -108,6 +108,8 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
       if (Selection.equals("0")) menu.show();
 
       else {
+
+
           TimetableLine myBooking= new TimetableLine();
           ArrayList<TimetableLine> ttlBooking = new ArrayList<>(DAOTTL.get(999,Selection,"NA", searchDate,999,pathTable));
           for(TimetableLine s: ttlBooking)

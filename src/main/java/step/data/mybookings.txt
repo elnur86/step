@@ -1,1 +1,2 @@
-MB06 26/12/2019 2200 Baku Moscow 17
+AB01 26/12/2019 1600 Baku Amsterdam 45
+LB01 25/12/2019 0500 Baku London 12

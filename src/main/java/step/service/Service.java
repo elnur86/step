@@ -27,29 +27,20 @@ public class Service implements DAO<TimetableLine> {
 
         List<TimetableLine> returnList =new ArrayList<>();
         List<TimetableLine> checkList =new ArrayList<>();
-        List<TimetableLine> checkList1 =new ArrayList<>();
-        List<TimetableLine> checkList2 =new ArrayList<>();
-        List<TimetableLine> checkList3 =new ArrayList<>();
         TimetableLine exactMatch = new TimetableLine();
-        TimetableLine exactMatch1 = new TimetableLine();
-        TimetableLine exactMatch2 = new TimetableLine();
-        TimetableLine exactMatch3 = new TimetableLine();
+
         SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy");
         Date checkDate=formatedDate.parse("01/01/2001");
-        //Date checkDate;
+
         if (id==999)
         {
             List<TimetableLine> ttlList =new ArrayList<>();
-
             ttlList=getAll(path);
             int i=0;
-            for(TimetableLine ttlFlightNumber: ttlList)
-            {
-                if (flight.equals(ttlFlightNumber.getFlightNumber()))
-                {
+            for(TimetableLine ttlFlightNumber: ttlList){
+                if (flight.equals(ttlFlightNumber.getFlightNumber())){
                     exactMatch = ttlFlightNumber;
                     i++;
-
                     returnList.add(exactMatch);
                 }
             }
@@ -125,13 +116,19 @@ public class Service implements DAO<TimetableLine> {
     }
 
     @Override
-    public void put(int id, TimetableLine myBooking) throws IOException {
+    public void put(int id, TimetableLine myBooking) throws IOException, ParseException {
+
+        ArrayList<TimetableLine> ttlarlMyBooking = new ArrayList<>();
+        ttlarlMyBooking=readFromFile("src/main/java/step/data/mybookings.txt");
+        ttlarlMyBooking.add(myBooking);
         BufferedWriter bw = new BufferedWriter(
                 new FileWriter(
                         new File("src/main/java/step/data/mybookings.txt")));
         // -------------
-        bw.write(myBooking.toString2());
-        bw.newLine();
+        for (TimetableLine mb: ttlarlMyBooking) {
+            bw.write(mb.toString2());
+            bw.newLine();
+        }
         bw.close();
     }
 
@@ -140,16 +137,16 @@ public class Service implements DAO<TimetableLine> {
             @Override
     public void delete(int id, String Code) throws IOException, ParseException {
             ArrayList<TimetableLine> deleteBooking = new ArrayList<>();
-            deleteBooking=readFromFile("src/main/java/hw/step/data/mybookings.txt");
+            deleteBooking=readFromFile("src/main/java/step/data/mybookings.txt");
 
 
             BufferedWriter bw = new BufferedWriter(
                 new FileWriter(
-                      new File("src/main/java/hw/step/data/mybookings.txt")));
+                      new File("src/main/java/step/data/mybookings.txt")));
 
                 for (TimetableLine itr: deleteBooking)
                     if(!itr.getFlightNumber().equals(Code)) {
-                        bw.write(itr.toString1());
+                        bw.write(itr.toString2());
                         bw.newLine();
                     }
 

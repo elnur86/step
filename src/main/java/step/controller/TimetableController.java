@@ -11,11 +11,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class TimetableController {
 
 String pathTable="src/main/java/step/data/timetableVerA.txt";
-String pathMyBooking= "src/main/java/step/data/mybookings.txt";
 
 DAO<TimetableLine> DAOTTL =new Service();
 
@@ -34,7 +34,8 @@ DAO<TimetableLine> DAOTTL =new Service();
     console.printLn ("Please insert the flight number: ");
     String fltnumber= console.readLn();
 
-    ArrayList<TimetableLine> ttlArrL = new ArrayList<>(DAOTTL.get(999,fltnumber,"NA", new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2001"),999,pathTable));
+    List<TimetableLine> ttlArrL = new ArrayList<TimetableLine>();
+      ttlArrL=DAOTTL.getBy(timetableLine -> timetableLine.getFlightNumber().equals(fltnumber));
 
     for(TimetableLine s: ttlArrL)
       System.out.println(s);

@@ -2,6 +2,7 @@ package step.service;
 
 import step.dao.DAO;
 import step.entity.City;
+import step.entity.TimeTable;
 import step.entity.TimetableLine;
 
 import java.io.*;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class Service implements DAO<TimetableLine> {
 
@@ -23,96 +26,22 @@ public class Service implements DAO<TimetableLine> {
     }
 
     @Override
-    public List<TimetableLine> get(int id, String flight,String dsc, Date date, int np, String path) throws IOException, ParseException {
+    public List<TimetableLine> get(int id) throws IOException, ParseException {
 
         List<TimetableLine> returnList =new ArrayList<>();
         List<TimetableLine> checkList =new ArrayList<>();
         TimetableLine exactMatch = new TimetableLine();
 
-        SimpleDateFormat formatedDate = new SimpleDateFormat("dd/MM/yyyy");
-        Date checkDate=formatedDate.parse("01/01/2001");
 
-        if (id==999)
-        {
-            List<TimetableLine> ttlList =new ArrayList<>();
-            ttlList=getAll(path);
-            int i=0;
-            for(TimetableLine ttlFlightNumber: ttlList){
-                if (flight.equals(ttlFlightNumber.getFlightNumber())){
-                    exactMatch = ttlFlightNumber;
-                    i++;
-                    returnList.add(exactMatch);
-                }
-            }
-            if (i==0) {
-                System.out.println("There is no such a flight");
-            }
-                      if (date.compareTo(checkDate)!=0)
-            {
-                checkList = returnList;
-                returnList = new ArrayList<TimetableLine>();
-                for (TimetableLine flightDate : checkList) {
-                    if (date.compareTo(flightDate.getFlightDate()) == 0) {
-                        exactMatch = flightDate;
-                        returnList.add(flightDate);
+        return returnList;
+    }
 
-                    }
-
-                }
-
-            }
-
-        }
-        else if(!dsc.equals("NA")) {
-            List<TimetableLine> ttlList = new ArrayList<>();
-            String cityCheck;
-            ttlList = getAll(path);
-            int i = 0;
-            for (TimetableLine desCity : ttlList) {
-                if (dsc.equals(desCity.getDst().getName())) {
-                    exactMatch = desCity;
-                    i++;
-                    returnList.add(exactMatch);
-                }
-            }
-            if (i == 0) {
-                System.out.println("There is no such a flight");
-
-            }
-            int j = 0;
-            if (date.compareTo(checkDate) != 0) {
-                checkList = returnList;
-                returnList = new ArrayList<TimetableLine>();
-                for (TimetableLine flightDate : checkList) {
-                    if (date.compareTo(flightDate.getFlightDate()) == 0) {
-                        exactMatch = flightDate;
-                        j++;
-                        returnList.add(flightDate);
-
-                    }
-
-                }
-                if (j == 0) {
-                    System.out.printf("%s flight is not available on %s", dsc, date); }
-
-               int l = 0;
-                if (np!=999) {
-                    checkList = returnList;
-                    returnList = new ArrayList<TimetableLine>();
-                    for (TimetableLine freeSeat : checkList) {
-                        if (np<=freeSeat.getFreeSeat()) {
-                            exactMatch = freeSeat;
-                            l++;
-                            returnList.add(freeSeat);
-                        }
-                    }
-                    if (l == 0) {
-                        System.out.printf("%s flight has no %d number of free seats", dsc, np); }
-
-                }            }
-
-        }
-                return returnList;
+    @Override
+    public List<TimetableLine> getBy(Predicate<TimetableLine> predicate) throws IOException, ParseException {
+        List<TimetableLine> SearchBy=getAll("src/main/java/step/data/timetableVerA.txt");
+        return SearchBy.stream()
+                .filter(predicate)
+                .collect(Collectors.toList());
     }
 
     @Override

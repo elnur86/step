@@ -1,5 +1,6 @@
 package step.controller;
 
+import com.sun.org.apache.xml.internal.dtm.DTMAxisTraverser;
 import step.Console;
 import step.Database;
 import step.Menu;
@@ -15,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class BookingController {
 DAO<TimetableLine> DAOTTL =new Service();
@@ -51,7 +53,19 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
             System.out.println("There is no such a flight");
             add();
         }
-            return exactMatch;
+        List<TimetableLine> ttlList1 =new ArrayList<>();
+
+        ttlList1= DAOTTL.getBy((TimetableLine ttl) -> ttl.getFlightNumber().equals(flightNumber));
+
+        /*
+        ttlList1=DAOTTL.getBy(timetableLine -> {
+            return timetableLine.getFlightDate().equals(flightNumber);
+        });
+*/
+        TimetableLine exactMatch1 = new TimetableLine();
+        exactMatch1=ttlList1.get(0);
+
+            return exactMatch1;
     }
 
     public void remove() throws IOException, ParseException {
@@ -61,15 +75,6 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
         String fltnumber= console.readLn();
 
         DAOTTL.delete(1,fltnumber);
-
-  }
-
-  public void show() throws IOException, ParseException {
-
-      ArrayList<TimetableLine> ttlMyBooking = new ArrayList<>(DAOTTL.get(1,"NA","NA", new SimpleDateFormat("dd/MM/yyyy").parse("01/01/2001"),12,pathTable));
-
-      for(TimetableLine s: ttlMyBooking)
-          System.out.println(s);
 
   }
 
@@ -96,9 +101,14 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
       int searchSeat= Integer.parseInt(seat);
 
 
-      ArrayList<TimetableLine> ttlSearch = new ArrayList<>(DAOTTL.get(1,"NA",searchCity, searchDate,searchSeat,pathTable));
+      ArrayList<TimetableLine> ttlSearch_ = new ArrayList<>(DAOTTL.getBy((TimetableLine ttl) -> {
+                  return ttl.getDst().getName().equals(searchCity)
+                          && ttl.getFlightDate().compareTo(searchDate) == 0
+                          && ttl.getFreeSeat() > searchSeat;
+              }
+      ));
 
-      for(TimetableLine s: ttlSearch)
+      for(TimetableLine s: ttlSearch_)
           System.out.println(s);
 
       Menu menu= new Menu();
@@ -111,7 +121,13 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
 
 
           TimetableLine myBooking= new TimetableLine();
-          ArrayList<TimetableLine> ttlBooking = new ArrayList<>(DAOTTL.get(999,Selection,"NA", searchDate,999,pathTable));
+          ArrayList<TimetableLine> ttlBooking = new ArrayList<>(DAOTTL.getBy(new Predicate<TimetableLine>() {
+              @Override
+              public boolean test(TimetableLine timetableLine) {
+                  return (timetableLine.getFlightDate().equals(searchDate))
+                   &&    (timetableLine.getFlightNumber().equals(Selection)) ;
+              }
+          }));
           for(TimetableLine s: ttlBooking)
               myBooking=s;
       DAOTTL.put(999,myBooking);

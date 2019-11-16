@@ -1,5 +1,7 @@
 package step.service;
 
+import step.Console;
+import step.SystemConsole;
 import step.dao.DAO;
 import step.entity.City;
 import step.entity.TimeTable;
@@ -64,23 +66,30 @@ public class Service implements DAO<TimetableLine> {
 
 
             @Override
-    public void delete(int id, String Code) throws IOException, ParseException {
+    public void delete(int id) throws IOException, ParseException {
+            Console console = new SystemConsole();
             ArrayList<TimetableLine> deleteBooking = new ArrayList<>();
             deleteBooking=readFromFile("src/main/java/step/data/mybookings.txt");
 
+            if(deleteBooking.isEmpty())
+                console.printLn("No booked flight available");
+            else {
 
-            BufferedWriter bw = new BufferedWriter(
-                new FileWriter(
-                      new File("src/main/java/step/data/mybookings.txt")));
+                console.printLn ("Please insert flight number: ");
+                String fltnumber= console.readLn();
 
-                for (TimetableLine itr: deleteBooking)
-                    if(!itr.getFlightNumber().equals(Code)) {
+                BufferedWriter bw = new BufferedWriter(
+                        new FileWriter(
+                                new File("src/main/java/step/data/mybookings.txt")));
+
+                for (TimetableLine itr : deleteBooking)
+                    if (!itr.getFlightNumber().equals(fltnumber)) {
                         bw.write(itr.toString2());
                         bw.newLine();
                     }
 
                 bw.close();
-
+            }
     }
 
     public ArrayList<TimetableLine> readFromFile (String path) throws IOException, ParseException {

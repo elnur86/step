@@ -13,5 +13,5 @@ public interface DAO<T> {
   List<T> getBy(Predicate<T> predicate) throws IOException, ParseException;
   List<T> getAll(String path) throws IOException, ParseException;
   void put(int id, T object) throws IOException, ParseException;
-  void delete(int id, String Code) throws IOException, ParseException;
+  void delete(int id) throws IOException, ParseException;
 }

@@ -69,19 +69,17 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
     }
 
     public void remove() throws IOException, ParseException {
-        TimetableLine removeLine;
-        Console console = new SystemConsole();
-        console.printLn ("Please insert flight number: ");
-        String fltnumber= console.readLn();
-
-        DAOTTL.delete(1,fltnumber);
+      DAOTTL.delete(1);
 
   }
 
     public void showMyBooking() throws IOException, ParseException {
-
+        Console console = new SystemConsole();
         ArrayList<TimetableLine> ttlMyBooking = new ArrayList<>(DAOTTL.getAll(pathMyBooking));
 
+        if (ttlMyBooking.isEmpty())
+            console.printLn("No booking information.");
+        else
         for(TimetableLine s: ttlMyBooking)
             System.out.println(s);
 
@@ -107,6 +105,11 @@ String pathMyBooking= "src/main/java/step/data/mybookings.txt";
                           && ttl.getFreeSeat() > searchSeat;
               }
       ));
+
+      if (ttlSearch_.isEmpty()){
+          console.printLn("There is no such a flight:");
+          searchFlight();
+      }
 
       for(TimetableLine s: ttlSearch_)
           System.out.println(s);
